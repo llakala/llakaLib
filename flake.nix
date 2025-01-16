@@ -1,5 +1,5 @@
 {
-  outputs = { nixpkgs }:
+  outputs = { nixpkgs, ... }:
   let
     lib = nixpkgs.lib;
 
