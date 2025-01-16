@@ -10,11 +10,11 @@
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
 
-    # Imports all custom functions in myLib automatically
-    # We use laziness to rely on myLib, while creating myLib. Nix is magic
-    myLib =
+    # Imports all custom functions in llakaLib automatically
+    # We use laziness to rely on llakaLib, while *creating* llakaLib. Nix is magic
+    llakaLib =
     let
-      utils = { inherit lib nixpkgs myLib; };
+      utils = { inherit lib nixpkgs llakaLib; };
     in lib.packagesFromDirectoryRecursive
     {
       # Create an instance of callPackage, but with more things importable
@@ -24,7 +24,7 @@
     };
   in
   {
-    lib = myLib; # Only output we give, so consumers can use myLib functions.
+    lib = llakaLib; # Only output we give, so consumers can use llakaLib functions.
   };
 
 

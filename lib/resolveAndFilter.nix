@@ -1,4 +1,4 @@
-{ myLib }:
+{ llakaLib }:
 
 input:
-  myLib.filterNixFiles ( myLib.resolveFolders input )
+  llakaLib.filterNixFiles ( llakaLib.resolveFolders input )
