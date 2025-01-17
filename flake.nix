@@ -3,6 +3,13 @@
   let
     lib = nixpkgs.lib;
 
+    # Systems which I can assume will probably work fine. If they ever don't, let me know!
+    supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64_linux" "aarch64-darwin" ];
+
+    forAllSystems = function: lib.genAttrs
+      supportedSystems
+      (system: function nixpkgs.legacyPackages.${system});
+
     # Pure lib functions without any reliance on `pkgs`
     # We use laziness to rely on pureLlakaLib, while *creating* pureLlakaLib. Nix is magic
     llakaLib =
@@ -31,11 +38,11 @@
     pureLib = llakaLib;
 
     # Only impure functions
-    legacyPackages = llakaLib.forAllSystems
+    legacyPackages = forAllSystems
     ( pkgs: mkImpureLlakaLib pkgs );
 
     # Merges pure/impure lib functions, if you're okay with passing in system
-    fullLib = llakaLib.forAllSystems
+    fullLib = forAllSystems
     (
       pkgs: llakaLib // (mkImpureLlakaLib pkgs)
     );
