@@ -3,28 +3,42 @@
   let
     lib = nixpkgs.lib;
 
-    # Currently creating this for setting up a pkgs instance. I tried using `forAllSystems`
-    # here, but it was creating an attrset that was different systems at top-level, which
-    # isn't what I need. I dislike creating unnecessary pkgs instances, but I don't see
-    # an obvious workaround here, so it'll do. Let me know if there's a better way!
-    pkgs = nixpkgs.legacyPackages.x86_64-linux;
-
-
-    # Imports all custom functions in llakaLib automatically
-    # We use laziness to rely on llakaLib, while *creating* llakaLib. Nix is magic
+    # Pure lib functions without any reliance on `pkgs`
+    # We use laziness to rely on pureLlakaLib, while *creating* pureLlakaLib. Nix is magic
     llakaLib =
     let
       utils = { inherit lib nixpkgs llakaLib; };
     in lib.packagesFromDirectoryRecursive
     {
-      # Create an instance of callPackage, but with more things importable
-      callPackage = lib.callPackageWith (pkgs // utils );
+      callPackage = lib.callPackageWith utils;
 
       directory = ./lib;
     };
+
+    # Impure lib functions that need `pkgs` to function
+    # Actually defined as a function that *creates* impureLlakaLib after inputting `pkgs`
+    # `pkgs` can be inputted by instantiating `forAllSystems`
+    mkImpureLlakaLib = pkgs: llakaLib.collectDirectoryPackages
+    {
+      inherit pkgs;
+
+      directory = ./packages;
+      extras = { inherit llakaLib; };
+    };
   in
   {
-    lib = llakaLib; # Only output we give, so consumers can use llakaLib functions.
+    # If you need everything to be system-independent
+    pureLib = llakaLib;
+
+    # Only impure functions
+    legacyPackages = llakaLib.forAllSystems
+    ( pkgs: mkImpureLlakaLib pkgs );
+
+    # Merges pure/impure lib functions, if you're okay with passing in system
+    fullLib = llakaLib.forAllSystems
+    (
+      pkgs: llakaLib // (mkImpureLlakaLib pkgs)
+    );
   };
 
 
