@@ -4,7 +4,7 @@
     lib = nixpkgs.lib;
 
     # Systems which I can assume will probably work fine. If they ever don't, let me know!
-    supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64_linux" "aarch64-darwin" ];
+    supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
 
     forAllSystems = function: lib.genAttrs
       supportedSystems
