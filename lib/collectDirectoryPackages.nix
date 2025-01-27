@@ -6,9 +6,12 @@
 { directory, pkgs, extras ? {} }: # Function arguments
 lib.makeScope pkgs.newScope
 (
-  selfPkgs: lib.packagesFromDirectoryRecursive # selfPkgs are internally-defined packages we find along the way
+  # `localPackages` are internally-defined packages we find along the way
+  # We use a wrapping set to grab local as our input, and prevent `pkgs` shadowing
+  localPackages: let localWrapper = { inherit localPackages; }; in
+  lib.packagesFromDirectoryRecursive
   {
-    callPackage = lib.callPackageWith (selfPkgs // pkgs // extras ); # Rely on custom packages, `pkgs`, and `llakaLib`
+    callPackage = lib.callPackageWith (localWrapper // pkgs // extras ); # Rely on custom packages, `pkgs`, and `llakaLib`
     inherit directory;
   }
 )
