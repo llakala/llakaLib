@@ -37,8 +37,7 @@
     # tldr, calling a function with the same arguments twice isn't optimized, but
     # accessing the same VALUE is, so we try not to repeatedly call functions
     # where possible.
-    impureLib =
-    forAllSystems
+    impureLib = forAllSystems
     (
       pkgs: pureLib.collectDirectoryPackages
       {

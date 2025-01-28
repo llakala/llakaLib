@@ -7,7 +7,8 @@
 lib.makeScope pkgs.newScope
 (
   # `localPackages` are internally-defined packages we find along the way
-  # We use a wrapping set to grab local as our input, and prevent `pkgs` shadowing
+  # We use a wrapping set to grab `localPackages` as a file input, and prevent `pkgs` shadowing
+  # from grabbing individual discovered packages locally
   localPackages: let localWrapper = { inherit localPackages; }; in
   lib.packagesFromDirectoryRecursive
   {
