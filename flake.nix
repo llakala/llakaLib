@@ -43,7 +43,7 @@
       {
         inherit pkgs;
 
-        directory = ./packages;
+        directory = ./impureLib;
         extras = { inherit llakaLib; };
       }
     );
@@ -52,14 +52,14 @@
     # If you only want pure functions and no reliance on system parameter
     inherit pureLib;
 
-    legacyPackages = impureLib;
-
     # Merges pure/impure lib functions, if you're okay with passing in system
+    # For each system, we merge pureLib with impureLib for that given system
+    # This means all systems get an instance of fullLib, while avoiding unnecessary
+    # calling of functions and saving on eval time
     fullLib = forAllSystems
     (
-      pkgs:
-        pureLib //
-        (impureLib.${pkgs.system}) # Merges impureLib in for our specific system, FOR ALL systems
+      pkgs: pureLib //
+        (impureLib.${pkgs.system})
     );
   };
 
