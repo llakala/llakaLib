@@ -61,6 +61,12 @@
       pkgs: pureLib //
         (impureLib.${pkgs.system})
     );
+
+    templates.default =
+    {
+      path = ./template;
+      description = "nix flake init --template llakala/llakaLib";
+    };
   };
 
 
