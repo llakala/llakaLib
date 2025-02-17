@@ -1,0 +1,3 @@
+{ pkgs, llakaLib }:
+
+pkgs.hello
