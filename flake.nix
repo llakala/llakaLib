@@ -1,4 +1,9 @@
 {
+  inputs =
+  {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
+
   outputs = { nixpkgs, ... }:
   let
     lib = nixpkgs.lib;
