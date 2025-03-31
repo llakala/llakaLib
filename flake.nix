@@ -52,6 +52,17 @@
     # If you only want pure functions and no reliance on system parameter
     inherit pureLib;
 
+    # Custom packages useful in multiple projects
+    packages = forAllSystems
+    (
+      pkgs: pureLib.collectDirectoryPackages
+      {
+        inherit pkgs;
+        directory = ./packages;
+        extras = { inherit llakaLib; };
+      }
+    );
+
     # Merges pure/impure lib functions, if you're okay with passing in system
     # For each system, we merge pureLib with impureLib for that given system
     # This means all systems get an instance of fullLib, while avoiding unnecessary
