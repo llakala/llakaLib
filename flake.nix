@@ -52,21 +52,6 @@
         extras = { inherit llakaLib; };
       }
     );
-  in
-  {
-    # If you only want pure functions and no reliance on system parameter
-    inherit pureLib;
-
-    # Custom packages useful in multiple projects
-    packages = forAllSystems
-    (
-      pkgs: pureLib.collectDirectoryPackages
-      {
-        inherit pkgs;
-        directory = ./packages;
-        extras = { inherit llakaLib; };
-      }
-    );
 
     # Merges pure/impure lib functions, if you're okay with passing in system
     # For each system, we merge pureLib with impureLib for that given system
@@ -76,6 +61,22 @@
     (
       pkgs: pureLib //
         (impureLib.${pkgs.system})
+    );
+  in
+  {
+    # We define them in `let` for some self-reference
+    inherit pureLib fullLib;
+
+    # Custom packages useful in multiple projects. We define these to have access
+    # to `fullLib`, so they can rely on stuff like `writeShellApplication`.
+    packages = forAllSystems
+    (
+      pkgs: pureLib.collectDirectoryPackages
+      {
+        inherit pkgs;
+        directory = ./packages;
+        extras = { llakaLib = fullLib.${pkgs.system}; };
+      }
     );
 
     templates.default =
