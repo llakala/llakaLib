@@ -2,9 +2,10 @@
 
 let
   handlePath = path:
-    if lib.pathIsDirectory path
+    if lib.isPath path && lib.pathIsDirectory path
       then lib.filesystem.listFilesRecursive path
     else
+      # Handles both modules and single files
       lib.singleton path;
 
   handlePaths = paths:
